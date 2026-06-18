@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
-	"portmon/internal/iptables"
-	"portmon/internal/storage"
+	"github.com/mintdesu/portmon/internal/iptables"
+	"github.com/mintdesu/portmon/internal/storage"
 
 	"github.com/spf13/cobra"
 )

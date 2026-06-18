@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"portmon/internal/collector"
+	"github.com/mintdesu/portmon/internal/collector"
 
 	"github.com/spf13/cobra"
 )

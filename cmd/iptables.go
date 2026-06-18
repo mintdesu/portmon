@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"portmon/internal/iptables"
+	"github.com/mintdesu/portmon/internal/iptables"
 
 	"github.com/spf13/cobra"
 )

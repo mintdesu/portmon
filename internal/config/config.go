@@ -11,19 +11,21 @@ import (
 )
 
 const (
-	DefaultConfigPath  = "/etc/portmon/config.yaml"
-	DefaultDataDir     = "/var/lib/portmon"
-	DefaultIntervalSec = 60
-	DefaultIptables    = "iptables"
+	DefaultConfigPath       = "/etc/portmon/config.yaml"
+	DefaultDataDir          = "/var/lib/portmon"
+	DefaultIntervalSec      = 60
+	DefaultIptables         = "iptables"
+	DefaultLogRetentionDays = 30
 )
 
 type Config struct {
-	Interface     string       `yaml:"interface"`
-	Ports         []PortConfig `yaml:"ports"`
-	Interval      int          `yaml:"interval"`
-	DataDir       string       `yaml:"data_dir"`
-	CleanupOnExit bool         `yaml:"cleanup_on_exit"`
-	IptablesPath  string       `yaml:"iptables_path"`
+	Interface        string       `yaml:"interface"`
+	Ports            []PortConfig `yaml:"ports"`
+	Interval         int          `yaml:"interval"`
+	DataDir          string       `yaml:"data_dir"`
+	LogRetentionDays int          `yaml:"log_retention_days"`
+	CleanupOnExit    bool         `yaml:"cleanup_on_exit"`
+	IptablesPath     string       `yaml:"iptables_path"`
 }
 
 type PortConfig struct {
@@ -43,7 +45,7 @@ func Load(path string) (*Config, error) {
 		return nil, fmt.Errorf("read config %q: %w", path, err)
 	}
 
-	var cfg Config
+	cfg := Config{LogRetentionDays: DefaultLogRetentionDays}
 	if err := yaml.Unmarshal(raw, &cfg); err != nil {
 		return nil, fmt.Errorf("parse config %q: %w", path, err)
 	}
@@ -73,6 +75,9 @@ func (c Config) Validate() error {
 	}
 	if c.Interval <= 0 {
 		return fmt.Errorf("config interval must be positive, got %d", c.Interval)
+	}
+	if c.LogRetentionDays < 0 {
+		return fmt.Errorf("config log_retention_days must be zero or positive, got %d", c.LogRetentionDays)
 	}
 	if len(c.Ports) == 0 {
 		return errors.New("config ports must contain at least one port")

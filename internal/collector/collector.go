@@ -6,9 +6,9 @@ import (
 	"log/slog"
 	"time"
 
-	"portmon/internal/config"
-	"portmon/internal/iptables"
-	"portmon/internal/storage"
+	"github.com/mintdesu/portmon/internal/config"
+	"github.com/mintdesu/portmon/internal/iptables"
+	"github.com/mintdesu/portmon/internal/storage"
 )
 
 type Collector struct {
@@ -125,6 +125,11 @@ func (c *Collector) CollectOnce(ctx context.Context) error {
 	c.state = nextState
 	if err := storage.SaveState(c.cfg.DataDir, c.state); err != nil {
 		return err
+	}
+	if removed, err := storage.CleanupOldCSVs(c.cfg.DataDir, c.cfg.LogRetentionDays, now); err != nil {
+		slog.Warn("old csv cleanup failed", "error", err)
+	} else if removed > 0 {
+		slog.Info("old csv files removed", "count", removed, "retention_days", c.cfg.LogRetentionDays)
 	}
 	slog.Debug("collection completed", "samples", len(samples), "data_dir", c.cfg.DataDir)
 	return nil

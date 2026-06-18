@@ -62,6 +62,7 @@ ports:
     owner: "charlie"
 interval: 60                 # 采集间隔（秒）
 data_dir: "/var/lib/portmon" # 数据存储目录
+log_retention_days: 30       # CSV 数据保留天数，0 表示不自动清理
 cleanup_on_exit: false       # 退出时是否清理 iptables 规则
 iptables_path: "iptables"   # iptables 路径，一般不用改
 ```
@@ -107,10 +108,10 @@ portmon report --from 2024-01-01 --to 2024-01-31
 # 按用户汇总
 portmon report --by-owner
 
-# 按月汇总
+# 按月汇总今天的数据；如需完整月份，请配合 --from/--to
 portmon report --monthly
 
-# 看当前 iptables 实时计数
+# 看当前 iptables 实时计数；首次使用前先执行 portmon iptables setup
 portmon status
 ```
 
@@ -162,8 +163,9 @@ go build -trimpath -ldflags="-s -w" -o portmon .
 ## 注意事项
 
 - 需要 root 权限运行（iptables 操作需要）
+- CSV 数据默认保留 30 天，可用 `log_retention_days` 调整
 - 流量单位按十进制换算（1 GB = 1,000,000,000 字节），和运营商计费口径一致
-- 已在 Debian 12 / iptables v1.8.9 (nf_tables) 上测试通过，其他系统建议先跑 `portmon status` 确认兼容性
+- 已在 Debian 12 / iptables v1.8.9 (nf_tables) 上测试通过，其他系统建议先跑 `portmon iptables setup`，再跑 `portmon status` 确认兼容性
 
 ## 许可证
 

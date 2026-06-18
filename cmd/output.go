@@ -5,7 +5,7 @@ import (
 	"io"
 	"text/tabwriter"
 
-	"portmon/internal/storage"
+	"github.com/mintdesu/portmon/internal/storage"
 )
 
 func printRows(w io.Writer, rows []storage.SummaryRow) {

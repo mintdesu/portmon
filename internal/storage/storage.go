@@ -117,6 +117,37 @@ func SaveState(dataDir string, state State) error {
 	return nil
 }
 
+func CleanupOldCSVs(dataDir string, retentionDays int, now time.Time) (int, error) {
+	if retentionDays <= 0 {
+		return 0, nil
+	}
+
+	entries, err := os.ReadDir(dataDir)
+	if errors.Is(err, os.ErrNotExist) {
+		return 0, nil
+	}
+	if err != nil {
+		return 0, fmt.Errorf("read data dir %q: %w", dataDir, err)
+	}
+
+	cutoff := startOfDay(now.AddDate(0, 0, -retentionDays))
+	removed := 0
+	for _, entry := range entries {
+		if entry.IsDir() || filepath.Ext(entry.Name()) != ".csv" {
+			continue
+		}
+		day, err := time.ParseInLocation("2006-01-02", entry.Name()[:len(entry.Name())-4], now.Location())
+		if err != nil || !day.Before(cutoff) {
+			continue
+		}
+		if err := os.Remove(filepath.Join(dataDir, entry.Name())); err != nil {
+			return removed, fmt.Errorf("remove old csv %q: %w", entry.Name(), err)
+		}
+		removed++
+	}
+	return removed, nil
+}
+
 func Summarize(dataDir string, options ReportOptions) ([]SummaryRow, error) {
 	from, to := normalizeRange(options.From, options.To)
 	rows := make(map[string]SummaryRow)

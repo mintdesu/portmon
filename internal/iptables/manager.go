@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"portmon/internal/config"
+	"github.com/mintdesu/portmon/internal/config"
 )
 
 const (

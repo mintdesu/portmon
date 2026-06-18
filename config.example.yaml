@@ -11,5 +11,6 @@ ports:
     owner: "charlie"
 interval: 60
 data_dir: "/var/lib/portmon"
+log_retention_days: 30
 cleanup_on_exit: false
 iptables_path: "iptables"

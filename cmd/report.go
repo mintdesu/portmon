@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"portmon/internal/storage"
+	"github.com/mintdesu/portmon/internal/storage"
 
 	"github.com/spf13/cobra"
 )

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"portmon/internal/config"
+	"github.com/mintdesu/portmon/internal/config"
 
 	"github.com/spf13/cobra"
 )

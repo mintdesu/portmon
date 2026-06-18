@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"portmon/cmd"
+	"github.com/mintdesu/portmon/cmd"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-module portmon
+module github.com/mintdesu/portmon
 
 go 1.22
 
