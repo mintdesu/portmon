@@ -1,3 +1,4 @@
 portmon
 *.exe
 dist/
+.DS_Store

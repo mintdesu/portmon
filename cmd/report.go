@@ -98,6 +98,9 @@ func reportRange(args []string) (time.Time, time.Time, error) {
 	if to.IsZero() {
 		to = from
 	}
+	if to.Before(from) {
+		from, to = to, from
+	}
 	return from, to, nil
 }
 
