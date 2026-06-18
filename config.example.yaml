@@ -1,0 +1,15 @@
+interface: eth0
+ports:
+  - port: 10000
+    name: "web-api"
+    owner: "alice"
+  - port: 10001
+    name: "game-server"
+    owner: "bob"
+  - port: 10002-10010
+    name: "proxy"
+    owner: "charlie"
+interval: 60
+data_dir: "/var/lib/portmon"
+cleanup_on_exit: false
+iptables_path: "iptables"
