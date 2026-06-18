@@ -35,6 +35,9 @@ var reportCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		if err := validateReportRetention(from, cfg.LogRetentionDays); err != nil {
+			return err
+		}
 
 		rows, err := storage.Summarize(cfg.DataDir, storage.ReportOptions{
 			From:    from,
@@ -84,6 +87,9 @@ func reportRange(args []string) (time.Time, time.Time, error) {
 	}
 	if from.IsZero() && to.IsZero() {
 		now := time.Now()
+		if reportMonthly {
+			return startOfMonth(now), now, nil
+		}
 		return now, now, nil
 	}
 	if from.IsZero() {
@@ -97,4 +103,29 @@ func reportRange(args []string) (time.Time, time.Time, error) {
 
 func parseDate(input string) (time.Time, error) {
 	return time.ParseInLocation("2006-01-02", input, time.Local)
+}
+
+func validateReportRetention(from time.Time, retentionDays int) error {
+	if retentionDays <= 0 {
+		return nil
+	}
+	cutoff := startOfDay(time.Now().AddDate(0, 0, -retentionDays))
+	if from.Before(cutoff) {
+		return fmt.Errorf("report starts before retained data: from=%s, oldest retained date=%s, log_retention_days=%d; increase log_retention_days or set it to 0",
+			from.Format("2006-01-02"),
+			cutoff.Format("2006-01-02"),
+			retentionDays,
+		)
+	}
+	return nil
+}
+
+func startOfDay(t time.Time) time.Time {
+	year, month, day := t.Date()
+	return time.Date(year, month, day, 0, 0, 0, 0, t.Location())
+}
+
+func startOfMonth(t time.Time) time.Time {
+	year, month, _ := t.Date()
+	return time.Date(year, month, 1, 0, 0, 0, 0, t.Location())
 }

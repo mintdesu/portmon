@@ -15,7 +15,7 @@ const (
 	DefaultDataDir          = "/var/lib/portmon"
 	DefaultIntervalSec      = 60
 	DefaultIptables         = "iptables"
-	DefaultLogRetentionDays = 30
+	DefaultLogRetentionDays = 90
 )
 
 type Config struct {
